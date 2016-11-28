@@ -7,14 +7,14 @@
 
 using namespace cv;
 
-#define train1 "train/indoor-dwelling-train" // indoor-dwelling - 1
-#define train2 "train/indoor-msu-train" // indoor-msu - 2
-#define train3 "train/outdoor-blossoms-train"// outdoor-blossoms - 3
-#define train4 "train/outdoor-urban-train" // outdoor-urban - 4
-#define test1 "test/indoor-dwelling-train" 
-#define test2 "test/indoor-msu-train" 
-#define test3 "test/outdoor-blossoms-train"
-#define test4 "test/outdoor-urban-train"
+#define train1 "train"
+#define train2 "train"
+#define train3 "train"
+#define train4 "train"
+#define test1 "test" 
+#define test2 "test" 
+#define test3 "test"
+#define test4 "test"
 #define vocsize 100
 
 
