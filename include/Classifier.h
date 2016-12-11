@@ -6,6 +6,6 @@
 
 using namespace cv;
 
-Ptr<CvRTrees> TrainClassifier(const Mat& trainData, const Mat& trainResponses, int trsum, int tesum, int vocsize);
+void TrainClassifier(const Mat& trainData, const Mat& trainResponses, int trsum, int tesum, int vocsize, Ptr<CvRTrees> rtp);
 
 #endif CLASSIFIER_H

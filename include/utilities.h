@@ -6,6 +6,6 @@
 #include <windows.h>
 
 void GetFilesInFolder(const std::string& dirPath,
-    std::vector<std::string> &filesList, int count);
+    std::vector<std::string> &filesList, int &count);
 
 #endif

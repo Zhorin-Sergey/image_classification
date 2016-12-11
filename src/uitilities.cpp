@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void GetFilesInFolder(const string& dirPath, std::vector<string> &filesList, int count)
+void GetFilesInFolder(const string& dirPath, std::vector<string> &filesList, int &count)
 {
   HANDLE handle;
   WIN32_FIND_DATAA fileData;

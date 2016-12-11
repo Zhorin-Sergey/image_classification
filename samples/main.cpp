@@ -8,15 +8,15 @@
 
 using namespace cv;
 
-#define train1 "train/indoor-dwelling-train"
-#define train2 "train/indoor-msu-train"
-#define train3 "train/outdoor-blossoms-train"
-#define train4 "train/outdoor-urban-train"
-#define test1 "test/indoor-dwelling-test" 
-#define test2 "test/indoor-msu-test" 
-#define test3 "test/outdoor-blossoms-test"
-#define test4 "test/outdoor-urban-test"
-#define vocsize 100
+#define train1 "D:/games/Reposit/Cv/image_classification_build/samples/train/indoor-dwelling-train"
+#define train2 "D:/games/Reposit/Cv/image_classification_build/samples/train/indoor-msu-train"
+#define train3 "D:/games/Reposit/Cv/image_classification_build/samples/train/outdoor-blossoms-train"
+#define train4 "D:/games/Reposit/Cv/image_classification_build/samples/train/outdoor-urban-train"
+#define test1 "D:/games/Reposit/Cv/image_classification_build/samples/test/indoor-dwelling-test" 
+#define test2 "D:/games/Reposit/Cv/image_classification_build/samples/test/indoor-msu-test" 
+#define test3 "D:/games/Reposit/Cv/image_classification_build/samples/test/outdoor-blossoms-test"
+#define test4 "D:/games/Reposit/Cv/image_classification_build/samples/test/outdoor-urban-test"
+#define vocsize 50
 
 
 int main()
@@ -34,10 +34,10 @@ int main()
   int sum = tr1 + te1 + te2 + tr2 + te3 + tr3 + te4 + tr4;
   int trsum = tr1 + tr2  + tr3 + tr4;
   int tesum = te1 + te2 +  te3 + te4;
-  std::vector<Mat> descriptors;
+  std::vector<Mat> descriptors(sum);
   std::vector<Mat> imgDesc;
   Mat samples(sum, vocsize, CV_32F);
-  std::vector<std::vector<KeyPoint>> keypoints;
+  std::vector<std::vector<KeyPoint>> keypoints(sum);
   int i = 0;
   Mat voc;
   while (i < sum)
@@ -45,14 +45,17 @@ int main()
     DetectKeypointsOnImage(filesList[i], keypoints[i], descriptors[i]);
     i++;
   }
+  printf("DetectKeypointsOnImage\n");
   i = 0;
   voc = BuildVocabulary(descriptors, vocsize, tr1 + tr2 + tr3 + tr4);
+  printf("BuildVocabulary\n");
   while (i < sum)
   {
     ComputeImgDescriptor(filesList[i], voc, samples.row(i));
     i++;
   }
-  Mat labels(trsum, 1, CV_32S);
+  printf("ComputeImgDescriptor\n");
+  Mat labels(sum, 1, CV_32S);
   int ind = 0;
   for (int j = 0 ; j < tr1; j++, ind++)
     labels.at<int>(ind) = 1;
@@ -70,23 +73,26 @@ int main()
     labels.at<int>(ind) = 3;
   for (int j = 0; j < te4; j++, ind++)
     labels.at<int>(ind) = 4;
-  CvRTrees* rf;
-  
-  rf = TrainClassifier(samples, labels, trsum, tesum, vocsize);
-  rf->save("model-rf.yml", "simpleRTreesModel");
- 
+  CvRTrees rf;
+  Ptr<CvRTrees> rtp = &rf;
+  printf("labels\n");
+  TrainClassifier(samples, labels, trsum, tesum, vocsize, rtp);
+  printf("TrainClassifier\n");
+  rf.save("model-rf.yml", "simpleRTreesModel");
+  printf("save\n");
   float trainError = 0.0f;
   for (int i = 0; i < trsum; ++i) {
-    int prediction = (int)(rf->predict(samples.row(i))); 
+    int prediction = (int)(rf.predict(samples.row(i))); 
     trainError += (labels.at<int>(i) != prediction); 
   } 
   trainError /= float(trsum);
   float testError = 0.0f; 
   for (int i = 0; i < sum - trsum; ++i) {
-    int prediction = (int)(rf->predict(samples.row(trsum + i)));
+    int prediction = (int)(rf.predict(samples.row(trsum + i)));
     testError += (labels.at<int>(trsum + i) != prediction);
   } 
   testError /= float(sum - trsum);
-  return 0;
   printf("train error = %.4f\ntest error = %.4f\n", trainError, testError);
+  return 0;
+
 }
