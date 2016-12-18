@@ -11,8 +11,8 @@
 using namespace std;
 using namespace cv;
 
-void DetectKeypointsOnImage(const string& fileName, vector<KeyPoint>& keypoints, Mat& descriptors);
+void DetectKeypointsOnImage(const string& fileName, vector<KeyPoint>& keypoints, Mat& descriptors, char* DescriptorExtractorType, char* DetectorType);
 Mat BuildVocabulary(const std::vector<Mat>& descriptors, int vocSize, size_t n);
-void ComputeImgDescriptor(const string& fileName, Mat& voc, Mat& imgDesc);
+void ComputeImgDescriptor(const string& fileName, Mat& voc, Mat& imgDesc, char* DescriptorExtractorType, char* DetectorType);
 
 #endif

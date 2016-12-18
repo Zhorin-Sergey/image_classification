@@ -8,7 +8,7 @@
 
 using namespace cv;
 
-#define train1 "D:/games/Reposit/Cv/image_classification_build/samples/train/indoor-dwelling-train"
+/*#define train1 "D:/games/Reposit/Cv/image_classification_build/samples/train/indoor-dwelling-train"
 #define train2 "D:/games/Reposit/Cv/image_classification_build/samples/train/indoor-msu-train"
 #define train3 "D:/games/Reposit/Cv/image_classification_build/samples/train/outdoor-blossoms-train"
 #define train4 "D:/games/Reposit/Cv/image_classification_build/samples/train/outdoor-urban-train"
@@ -16,21 +16,23 @@ using namespace cv;
 #define test2 "D:/games/Reposit/Cv/image_classification_build/samples/test/indoor-msu-test" 
 #define test3 "D:/games/Reposit/Cv/image_classification_build/samples/test/outdoor-blossoms-test"
 #define test4 "D:/games/Reposit/Cv/image_classification_build/samples/test/outdoor-urban-test"
-#define vocsize 50
+//#define vocsize 50*/
 
 
-int main()
+int main(int argc, char* argv[])
 {
   int te1 = 0, te2 = 0, te3 = 0, te4 = 0, tr1 = 0, tr2 = 0, tr3 = 0, tr4 = 0;
   std::vector<string> filesList;
-  GetFilesInFolder(train1, filesList, tr1);
-  GetFilesInFolder(train2, filesList, tr2);
-  GetFilesInFolder(train3, filesList, tr3);
-  GetFilesInFolder(train4, filesList, tr4);
-  GetFilesInFolder(test1, filesList, te1);
-  GetFilesInFolder(test2, filesList, te2);
-  GetFilesInFolder(test3, filesList, te3);
-  GetFilesInFolder(test4, filesList, te4);
+  GetFilesInFolder(argv[1], filesList, tr1);
+  GetFilesInFolder(argv[2], filesList, tr2);
+  GetFilesInFolder(argv[3], filesList, tr3);
+  GetFilesInFolder(argv[4], filesList, tr4);
+  GetFilesInFolder(argv[5], filesList, te1);
+  GetFilesInFolder(argv[6], filesList, te2);
+  GetFilesInFolder(argv[7], filesList, te3);
+  GetFilesInFolder(argv[8], filesList, te4);
+  int vocsize = atoi(argv[9]);
+
   int sum = tr1 + te1 + te2 + tr2 + te3 + tr3 + te4 + tr4;
   int trsum = tr1 + tr2  + tr3 + tr4;
   int tesum = te1 + te2 +  te3 + te4;
@@ -42,7 +44,7 @@ int main()
   Mat voc;
   while (i < sum)
   {
-    DetectKeypointsOnImage(filesList[i], keypoints[i], descriptors[i]);
+    DetectKeypointsOnImage(filesList[i], keypoints[i], descriptors[i], argv[10], argv[11]);
     i++;
   }
   printf("DetectKeypointsOnImage\n");
@@ -51,7 +53,7 @@ int main()
   printf("BuildVocabulary\n");
   while (i < sum)
   {
-    ComputeImgDescriptor(filesList[i], voc, samples.row(i));
+    ComputeImgDescriptor(filesList[i], voc, samples.row(i), argv[10], argv[11]);
     i++;
   }
   printf("ComputeImgDescriptor\n");
@@ -76,7 +78,7 @@ int main()
   CvRTrees rf;
   Ptr<CvRTrees> rtp = &rf;
   printf("labels\n");
-  TrainClassifier(samples, labels, trsum, tesum, vocsize, rtp);
+  TrainClassifier(samples, labels, trsum, tesum, vocsize, rtp, atoi(argv[12]), atoi(argv[13]));
   printf("TrainClassifier\n");
   rf.save("model-rf.yml", "simpleRTreesModel");
   printf("save\n");

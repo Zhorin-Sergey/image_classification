@@ -7,27 +7,27 @@ using namespace cv;
 // keypoints Ц найденные ключевые точки на изображении
 // img Ц исходное изображение
 // descriptors Ц вычисленные значени€ дескрипторов ключевых точек 
-void DetectKeypointsOnImage(const string& fileName, vector<KeyPoint>& keypoints, Mat& descriptors)
+void DetectKeypointsOnImage(const string& fileName, vector<KeyPoint>& keypoints, Mat& descriptors, char* DescriptorExtractorType, char* DetectorType)
 { 
   Mat img = imread(fileName);   // загружаем изображение из файла 
   initModule_nonfree();   // инициализируем модуль nonfree дл€ использовани€ детектора SIFT 
-  Ptr<FeatureDetector> featureDetector = FeatureDetector::create("SIFT");   // создаем SIFT детектор 
+  Ptr<FeatureDetector> featureDetector = FeatureDetector::create(DetectorType);   // создаем SIFT детектор 
   featureDetector->detect(img, keypoints);   // детектируем ключевые точки на загруженном изображении 
-  Ptr<DescriptorExtractor> descExtractor = DescriptorExtractor::create("SIFT");  // создаем объект класса вычислени€ SIFT дескрипторов 
+  Ptr<DescriptorExtractor> descExtractor = DescriptorExtractor::create(DescriptorExtractorType);  // создаем объект класса вычислени€ SIFT дескрипторов 
   descExtractor->compute(img, keypoints, descriptors);    // вычисл€ем дескрипторы ключевых точек на загруженном изображении 
 }
 
 // img Ц исходное изображение
 // keypoints Ц ключевые точки на изображении
 // descriptors Ц вычисленные значени€ дескрипторов ключевых точек 
-void ComputeKeypointDescriptorsOnImage( const string& fileName, vector<KeyPoint>& keypoints, Mat& descriptors) 
+void ComputeKeypointDescriptorsOnImage(const string& fileName, vector<KeyPoint>& keypoints, Mat& descriptors, char* DescriptorExtractorType)
 { 
   // инициализируем модуль nonfree дл€ использовани€ 
   // дескрипторов SIFT (если данна€ функци€ ранее не вызывалась) 
   initModule_nonfree();
   Mat img = imread(fileName);
   // создаем объект класса вычислени€ SIFT дескрипторов 
-  Ptr<DescriptorExtractor> descExtractor = DescriptorExtractor::create("SIFT"); 
+  Ptr<DescriptorExtractor> descExtractor = DescriptorExtractor::create(DescriptorExtractorType);
   // вычисл€ем дескрипторы ключевых точек на загруженном изображении 
   descExtractor->compute(img, keypoints, descriptors);
 }
@@ -51,11 +51,11 @@ Mat BuildVocabulary(const std::vector<Mat>& descriptors, int vocSize, size_t n)
 // img Ц исходное изображение 
 // voc Ц словарь дескрипторов ключевых точек; 
 // imgDesc Ц вычисленное признаковое описание изображени€ 
-void ComputeImgDescriptor(const string& fileName, Mat& voc, Mat& imgDesc)
+void ComputeImgDescriptor(const string& fileName, Mat& voc, Mat& imgDesc, char* DescriptorExtractorType, char* DetectorType)
 {
   Mat img = imread(fileName);
-  Ptr<FeatureDetector> featureDetector = FeatureDetector::create("SIFT");   // создаем SIFT детектор ключевых точек 
-  Ptr<DescriptorExtractor> dExtractor = DescriptorExtractor::create("SIFT"); // создаем объект класса вычислени€ SIFT дескрипторов ключевых точек 
+  Ptr<FeatureDetector> featureDetector = FeatureDetector::create(DetectorType);   // создаем SIFT детектор ключевых точек 
+  Ptr<DescriptorExtractor> dExtractor = DescriptorExtractor::create(DescriptorExtractorType); // создаем объект класса вычислени€ SIFT дескрипторов ключевых точек 
   Ptr<DescriptorMatcher> descriptorsMatcher = DescriptorMatcher::create("BruteForce");   // создаем объект класса, наход€щего ближайший к дескриптору центроид (по L2 метрике) 
   Ptr<BOWImgDescriptorExtractor> bowExtractor = new BOWImgDescriptorExtractor( dExtractor, descriptorsMatcher);   // создаем объект класса, вычисл€ющего признаковое описание изображений
   bowExtractor->setVocabulary(voc);   // устанавливаем используемый словарь  дескрипторов ключевых точек 
