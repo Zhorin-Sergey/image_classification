@@ -20,17 +20,17 @@ void DetectKeypointsOnImage(const string& fileName, vector<KeyPoint>& keypoints,
 // img Ц исходное изображение
 // keypoints Ц ключевые точки на изображении
 // descriptors Ц вычисленные значени€ дескрипторов ключевых точек 
-void ComputeKeypointDescriptorsOnImage(const string& fileName, vector<KeyPoint>& keypoints, Mat& descriptors, char* DescriptorExtractorType)
-{ 
-  // инициализируем модуль nonfree дл€ использовани€ 
-  // дескрипторов SIFT (если данна€ функци€ ранее не вызывалась) 
-  initModule_nonfree();
-  Mat img = imread(fileName);
-  // создаем объект класса вычислени€ SIFT дескрипторов 
-  Ptr<DescriptorExtractor> descExtractor = DescriptorExtractor::create(DescriptorExtractorType);
-  // вычисл€ем дескрипторы ключевых точек на загруженном изображении 
-  descExtractor->compute(img, keypoints, descriptors);
-}
+//void ComputeKeypointDescriptorsOnImage(const string& fileName, vector<KeyPoint>& keypoints, Mat& descriptors, char* DescriptorExtractorType)
+//{ 
+//  // инициализируем модуль nonfree дл€ использовани€ 
+//  // дескрипторов SIFT (если данна€ функци€ ранее не вызывалась) 
+//  initModule_nonfree();
+//  Mat img = imread(fileName);
+//  // создаем объект класса вычислени€ SIFT дескрипторов 
+//  Ptr<DescriptorExtractor> descExtractor = DescriptorExtractor::create(DescriptorExtractorType);
+//  // вычисл€ем дескрипторы ключевых точек на загруженном изображении 
+//  descExtractor->compute(img, keypoints, descriptors);
+//}
 
 // descriptors Ц предвычисленный набор дескрипторов изображений, используемый при построении словар€; 
 // vocSize Ц размер словар€; 
