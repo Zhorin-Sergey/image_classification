@@ -14,7 +14,11 @@ void DetectKeypointsOnImage(const string& fileName, vector<KeyPoint>& keypoints,
   Ptr<FeatureDetector> featureDetector = FeatureDetector::create(DetectorType);   // создаем SIFT детектор 
   featureDetector->detect(img, keypoints);   // детектируем ключевые точки на загруженном изображении 
   Ptr<DescriptorExtractor> descExtractor = DescriptorExtractor::create(DescriptorExtractorType);  // создаем объект класса вычислени€ SIFT дескрипторов 
-  descExtractor->compute(img, keypoints, descriptors);    // вычисл€ем дескрипторы ключевых точек на загруженном изображении 
+  descExtractor->compute(img, keypoints, descriptors);    // вычисл€ем дескрипторы ключевых точек на загруженном изображении
+  /*namedWindow("keypoints");
+  drawKeypoints(img, keypoints, img);
+  imshow("keypoints", img);
+  waitKey();*/
 }
 
 // img Ц исходное изображение
@@ -38,7 +42,7 @@ void DetectKeypointsOnImage(const string& fileName, vector<KeyPoint>& keypoints,
 Mat BuildVocabulary(const std::vector<Mat>& descriptors, int vocSize, size_t n)
 { 
   
-  BOWKMeansTrainer bowTrainer(vocSize); // создаем объект класса BOWTrainer с числом кластеров, равным vocSize, и остальными параметрами, используемыми по умолчанию 
+  BOWKMeansTrainer bowTrainer(vocSize, TermCriteria(), 5); // создаем объект класса BOWTrainer с числом кластеров, равным vocSize, и остальными параметрами, используемыми по умолчанию 
   
   for (size_t i = 0; i < n; i++) { 
     bowTrainer.add(descriptors[i]); // добавл€ем дескрипторы особых точек с изображений, используемых при обучении словар€ 
@@ -52,13 +56,14 @@ Mat BuildVocabulary(const std::vector<Mat>& descriptors, int vocSize, size_t n)
 // voc Ц словарь дескрипторов ключевых точек; 
 // imgDesc Ц вычисленное признаковое описание изображени€ 
 void ComputeImgDescriptor(const string& fileName, Mat& voc, Mat& imgDesc, char* DescriptorExtractorType, char* DetectorType)
-{
-  Mat img = imread(fileName);
+{  
   Ptr<FeatureDetector> featureDetector = FeatureDetector::create(DetectorType);   // создаем SIFT детектор ключевых точек 
   Ptr<DescriptorExtractor> dExtractor = DescriptorExtractor::create(DescriptorExtractorType); // создаем объект класса вычислени€ SIFT дескрипторов ключевых точек 
   Ptr<DescriptorMatcher> descriptorsMatcher = DescriptorMatcher::create("BruteForce");   // создаем объект класса, наход€щего ближайший к дескриптору центроид (по L2 метрике) 
-  Ptr<BOWImgDescriptorExtractor> bowExtractor = new BOWImgDescriptorExtractor( dExtractor, descriptorsMatcher);   // создаем объект класса, вычисл€ющего признаковое описание изображений
+  Ptr<BOWImgDescriptorExtractor> bowExtractor = new BOWImgDescriptorExtractor(dExtractor, descriptorsMatcher);   // создаем объект класса, вычисл€ющего признаковое описание изображений
   bowExtractor->setVocabulary(voc);   // устанавливаем используемый словарь  дескрипторов ключевых точек 
+  
+  Mat img = imread(fileName);
   vector<KeyPoint> keypoints; 
   featureDetector->detect(img, keypoints);   // находим ключевые точки на изображении
   bowExtractor->compute(img, keypoints, imgDesc);   // вычисл€ем признаковое описание изображени€
